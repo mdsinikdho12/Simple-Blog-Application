@@ -1,13 +1,16 @@
-import { log } from "console";
 import mongoose from "mongoose";
+
 const ConnectDB = async () => {
   if (mongoose.connection.readyState >= 1) {
-    log("DB already connected");
+    console.log("DB already connected");
     return;
   }
-  await mongoose.connect(
-    "mongodb+srv://mdferdousmahmud86:SINIKDHO13@cluster0.e1djus3.mongodb.net/blog-app"
-  );
-  console.log("DB connected");
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("✅ DB connected");
+  } catch (err) {
+    console.error("❌ DB connection error:", err.message);
+  }
 };
+
 export default ConnectDB;

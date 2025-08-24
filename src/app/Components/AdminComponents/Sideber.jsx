@@ -6,6 +6,7 @@ const sidebarItems = [
   { name: "All Posts", icon: "📝", link: "/admin/posts" },
   { name: "Subscriptions", icon: "📩", link: "/admin/subscriptions" },
   { name: "Add Post", icon: "➕", link: "/admin/addProduct" },
+  { name: "All Users", icon: "👥", link: "/admin/Alluser" },
 ];
 
 const Sidebar = () => {
