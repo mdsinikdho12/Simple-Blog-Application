@@ -3,10 +3,12 @@ import React, { useState } from "react";
 import Link from "next/link";
 
 const sidebarItems = [
+  { name: "Dashboard", icon: "📊", link: "/admin" },
   { name: "All Posts", icon: "📝", link: "/admin/posts" },
   { name: "Subscriptions", icon: "📩", link: "/admin/subscriptions" },
   { name: "Add Post", icon: "➕", link: "/admin/addProduct" },
   { name: "All Users", icon: "👥", link: "/admin/Alluser" },
+  { name: "Home", icon: "🏠", link: "/" },
 ];
 
 const Sidebar = () => {

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 const Blogitem = () => {
   const [blogData, setBlogData] = useState(null);
@@ -37,7 +38,7 @@ const Blogitem = () => {
 
             <div className="flex items-center mt-4">
               <img
-                src={post.authorImg} // ✅ fixed
+                src={post.authorImg}
                 alt={post.author}
                 className="w-10 h-10 rounded-full mr-3"
               />
@@ -45,10 +46,21 @@ const Blogitem = () => {
                 <p className="text-sm font-medium">{post.author}</p>
                 <p className="text-xs text-gray-500">
                   {new Date(post.createdAt).toLocaleDateString()}{" "}
-                  {/* ✅ fixed */}
                 </p>
               </div>
             </div>
+
+            <div className="flex justify-between mt-4">
+              <span className="text-sm bg-blue-600 rounded-lg px-2 py-1 text-white">
+                {post.category}
+              </span>
+            </div>
+
+            <Link
+              href={`/blogs/${post._id}`}
+              className="inline-block mt-4 text-blue-600 hover:underline">
+              Read More
+            </Link>
           </div>
         ))
       ) : (

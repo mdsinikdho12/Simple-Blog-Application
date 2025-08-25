@@ -4,10 +4,11 @@ import Link from "next/link";
 import { FaGithub, FaDiscord, FaYoutube } from "react-icons/fa";
 import { MdDarkMode } from "react-icons/md";
 import Image from "next/image";
-import { signOut } from "next-auth/react";
+import { signOut, signIn, useSession } from "next-auth/react";
 
 const Navber = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession(); // ইউজারের সেশন ডেটা
 
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900">
@@ -21,11 +22,33 @@ const Navber = () => {
 
         {/* Right side buttons */}
         <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-          <button
-            className="rounded-md bg-blue-500 p-2 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-            onClick={() => signOut()}>
-            Logout
-          </button>
+          {session ? (
+            <div className="flex items-center space-x-4">
+              {/* Profile Icon */}
+              <Link href="/admin">
+                <Image
+                  src={session.user?.image || "/avater.png"}
+                  alt="Profile"
+                  width={40}
+                  height={40}
+                  className="rounded-full cursor-pointer border-2 border-blue-500 hover:scale-105 transition"
+                />
+              </Link>
+
+              {/* Logout Button */}
+              <button
+                className="rounded-md bg-red-500 px-3 py-2 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                onClick={() => signOut()}>
+                Logout
+              </button>
+            </div>
+          ) : (
+            <button
+              className="rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+              onClick={() => signIn()}>
+              Login
+            </button>
+          )}
 
           {/* Mobile menu button */}
           <button
