@@ -44,7 +44,7 @@ export async function DELETE(request) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ message: "Blog deleted successfully" });
+    return NextResponse.json({ message: "✅ Blog deleted successfully" });
   } catch (error) {
     return NextResponse.json(
       { error: `Failed to delete blog: ${error.message}` },

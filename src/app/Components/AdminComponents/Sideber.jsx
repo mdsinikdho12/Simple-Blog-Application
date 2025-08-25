@@ -8,6 +8,7 @@ const sidebarItems = [
   { name: "Subscriptions", icon: "📩", link: "/admin/subscriptions" },
   { name: "Add Post", icon: "➕", link: "/admin/addProduct" },
   { name: "All Users", icon: "👥", link: "/admin/Alluser" },
+  { name: "Messages", icon: "💬", link: "/admin/messages" },
   { name: "Home", icon: "🏠", link: "/" },
 ];
 
