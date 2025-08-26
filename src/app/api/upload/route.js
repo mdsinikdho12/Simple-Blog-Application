@@ -1,6 +1,5 @@
-import { v2 as cloudinary } from "cloudinary";
 import { NextResponse } from "next/server";
-import "@/lib/config/cloudinary"; // Import  Cloudinary configuration
+import cloudinary from "@/lib/config/cloudinary";
 
 export async function POST(req) {
   try {
@@ -8,43 +7,28 @@ export async function POST(req) {
     const imageFile = formData.get("image");
 
     if (!imageFile) {
-      return NextResponse.json(
-        { error: "No image file provided." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
+    // Convert to buffer
     const arrayBuffer = await imageFile.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
+    // Upload to Cloudinary
     const result = await new Promise((resolve, reject) => {
       cloudinary.uploader
-        .upload_stream(
-          { folder: "nextjs_blog_images" },
-          (error, uploadResult) => {
-            if (error) {
-              console.error("Cloudinary Upload Error:", error);
-              return reject(error);
-            }
-            resolve(uploadResult);
-          }
-        )
+        .upload_stream({ folder: "uploads" }, (error, uploadResult) => {
+          if (error) return reject(error);
+          resolve(uploadResult);
+        })
         .end(buffer);
     });
 
     return NextResponse.json(
-      {
-        message: "Image uploaded successfully",
-        imageUrl: result.secure_url,
-        publicId: result.public_id,
-      },
+      { message: "Upload successful", url: result.secure_url },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("API Upload Error:", error);
-    return NextResponse.json(
-      { error: "Image upload failed", details: error.message },
-      { status: 500 }
-    );
+  } catch (err) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

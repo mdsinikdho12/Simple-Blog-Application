@@ -8,13 +8,15 @@ export default function AddProduct() {
     content: "",
     image: "",
     category: "",
-    authorImg: "",
+    authorImg:
+      "https://res.cloudinary.com/dkmng0l5h/image/upload/v1756200773/uploads/ietvsvskkblzf40qmsr1.jpg",
     author: "",
   });
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
 
   // handle input change
   const handleChange = (e) => {
@@ -32,12 +34,37 @@ export default function AddProduct() {
     setError(false);
 
     try {
+      let imageUrl = "";
+
+      //  Upload image to Cloudinary
+      if (imageFile) {
+        const imgData = new FormData();
+        imgData.append("image", imageFile);
+
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: imgData,
+        });
+
+        const uploadResult = await uploadRes.json();
+
+        if (!uploadRes.ok) {
+          throw new Error(uploadResult.error || "Image upload failed");
+        }
+
+        imageUrl = uploadResult.imageUrl;
+      }
+
+      // Send Blog data with imageUrl
       const res = await fetch("/api/blogs", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          image: imageUrl, // Cloudinary URL set here
+        }),
       });
 
       if (res.ok) {
@@ -50,11 +77,13 @@ export default function AddProduct() {
           authorImg: "",
           author: "",
         });
+        setImageFile(null);
       } else {
         setMessage("❌ Failed to add blog!");
         setError(true);
       }
     } catch (error) {
+      console.error(error);
       setMessage("⚠️ Something went wrong!");
       setError(true);
     } finally {
@@ -75,7 +104,6 @@ export default function AddProduct() {
           <input
             type="text"
             name="title"
-            placeholder="Enter blog title"
             value={formData.title}
             onChange={handleChange}
             className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -88,7 +116,6 @@ export default function AddProduct() {
           <label className="block mb-1 font-medium text-white">Content</label>
           <textarea
             name="content"
-            placeholder="Write your blog content..."
             value={formData.content}
             onChange={handleChange}
             rows="5"
@@ -97,15 +124,14 @@ export default function AddProduct() {
           />
         </div>
 
-        {/* Image URL */}
+        {/* Image Upload */}
         <div>
-          <label className="block mb-1 font-medium text-white">Image URL</label>
+          <label className="block mb-1 font-medium text-white">
+            Upload Image
+          </label>
           <input
-            type="text"
-            name="image"
-            placeholder="https://example.com/image.jpg"
-            value={formData.image}
-            onChange={handleChange}
+            type="file"
+            onChange={(e) => setImageFile(e.target.files[0])}
             className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
@@ -149,7 +175,6 @@ export default function AddProduct() {
           <input
             type="text"
             name="authorImg"
-            placeholder="https://example.com/author.jpg"
             value={formData.authorImg}
             onChange={handleChange}
             className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -163,7 +188,6 @@ export default function AddProduct() {
           <input
             type="text"
             name="author"
-            placeholder="Author name"
             value={formData.author}
             onChange={handleChange}
             className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -171,7 +195,7 @@ export default function AddProduct() {
           />
         </div>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <button
           type="submit"
           disabled={loading}
@@ -180,7 +204,6 @@ export default function AddProduct() {
         </button>
       </form>
 
-      {/* Message */}
       {message && (
         <p
           className={`mt-5 text-center font-medium ${
