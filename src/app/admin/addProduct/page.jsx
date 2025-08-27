@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function AddProduct() {
   const [formData, setFormData] = useState({
@@ -8,17 +8,22 @@ export default function AddProduct() {
     content: "",
     image: "",
     category: "",
-    authorImg:
-      "https://res.cloudinary.com/dkmng0l5h/image/upload/v1756200773/uploads/ietvsvskkblzf40qmsr1.jpg",
+    authorImg: "",
     author: "",
   });
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
-  const [imageFile, setImageFile] = useState(null);
 
-  // handle input change
+  const [blogPreview, setBlogPreview] = useState(null);
+  const [authorPreview, setAuthorPreview] = useState(null);
+
+  // 🔑 file input এর জন্য ref
+  const blogFileRef = useRef(null);
+  const authorFileRef = useRef(null);
+
+  // input change
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -26,7 +31,41 @@ export default function AddProduct() {
     });
   };
 
-  // handle form submit
+  // image upload
+  const handleImageUpload = async (e, fieldName) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (fieldName === "image") {
+      setBlogPreview(URL.createObjectURL(file));
+    } else if (fieldName === "authorImg") {
+      setAuthorPreview(URL.createObjectURL(file));
+    }
+
+    const formDataUpload = new FormData();
+    formDataUpload.append("file", file);
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formDataUpload,
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setFormData((prev) => ({ ...prev, [fieldName]: data.url }));
+      } else {
+        setMessage("❌ Image upload failed!");
+        setError(true);
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage("⚠️ Something went wrong while uploading image!");
+      setError(true);
+    }
+  };
+
+  // form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -34,37 +73,10 @@ export default function AddProduct() {
     setError(false);
 
     try {
-      let imageUrl = "";
-
-      //  Upload image to Cloudinary
-      if (imageFile) {
-        const imgData = new FormData();
-        imgData.append("image", imageFile);
-
-        const uploadRes = await fetch("/api/upload", {
-          method: "POST",
-          body: imgData,
-        });
-
-        const uploadResult = await uploadRes.json();
-
-        if (!uploadRes.ok) {
-          throw new Error(uploadResult.error || "Image upload failed");
-        }
-
-        imageUrl = uploadResult.imageUrl;
-      }
-
-      // Send Blog data with imageUrl
       const res = await fetch("/api/blogs", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          image: imageUrl, // Cloudinary URL set here
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
 
       if (res.ok) {
@@ -77,13 +89,18 @@ export default function AddProduct() {
           authorImg: "",
           author: "",
         });
-        setImageFile(null);
+        setBlogPreview(null);
+        setAuthorPreview(null);
+
+        // 🔑 file input reset
+        if (blogFileRef.current) blogFileRef.current.value = "";
+        if (authorFileRef.current) authorFileRef.current.value = "";
       } else {
         setMessage("❌ Failed to add blog!");
         setError(true);
       }
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       setMessage("⚠️ Something went wrong!");
       setError(true);
     } finally {
@@ -97,7 +114,7 @@ export default function AddProduct() {
         ✍️ Add New Blog
       </h1>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* Title */}
         <div>
           <label className="block mb-1 font-medium text-white">Title</label>
@@ -106,7 +123,7 @@ export default function AddProduct() {
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>
@@ -119,22 +136,31 @@ export default function AddProduct() {
             value={formData.content}
             onChange={handleChange}
             rows="5"
-            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>
 
-        {/* Image Upload */}
+        {/* Blog Image Upload */}
         <div>
           <label className="block mb-1 font-medium text-white">
-            Upload Image
+            Blog Image
           </label>
           <input
             type="file"
-            onChange={(e) => setImageFile(e.target.files[0])}
-            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            accept="image/*"
+            ref={blogFileRef} // 🔑 ref
+            onChange={(e) => handleImageUpload(e, "image")}
+            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white"
             required
           />
+          {blogPreview && (
+            <img
+              src={blogPreview}
+              alt="blog preview"
+              className="mt-3 rounded-lg w-40 h-40 object-cover"
+            />
+          )}
         </div>
 
         {/* Category */}
@@ -144,7 +170,7 @@ export default function AddProduct() {
             name="category"
             value={formData.category}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:ring-2 focus:ring-blue-500"
             required>
             <option value="" disabled>
               -- Select a Category --
@@ -164,22 +190,32 @@ export default function AddProduct() {
             <option value="Business" className="text-black">
               Business
             </option>
+            <option value="Programming" className="text-black">
+              Programming
+            </option>
           </select>
         </div>
 
-        {/* Author Image */}
+        {/* Author Image Upload */}
         <div>
           <label className="block mb-1 font-medium text-white">
-            Author Image URL
+            Author Image
           </label>
           <input
-            type="text"
-            name="authorImg"
-            value={formData.authorImg}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            type="file"
+            accept="image/*"
+            ref={authorFileRef} // 🔑 ref
+            onChange={(e) => handleImageUpload(e, "authorImg")}
+            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white"
             required
           />
+          {authorPreview && (
+            <img
+              src={authorPreview}
+              alt="author preview"
+              className="mt-3 rounded-full w-20 h-20 object-cover"
+            />
+          )}
         </div>
 
         {/* Author */}
@@ -190,7 +226,8 @@ export default function AddProduct() {
             name="author"
             value={formData.author}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="John Doe"
+            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>

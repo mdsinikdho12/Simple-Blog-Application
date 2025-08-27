@@ -4,7 +4,7 @@ import cloudinary from "@/lib/config/cloudinary";
 export async function POST(req) {
   try {
     const formData = await req.formData();
-    const imageFile = formData.get("image");
+    const imageFile = formData.get("file");
 
     if (!imageFile) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
