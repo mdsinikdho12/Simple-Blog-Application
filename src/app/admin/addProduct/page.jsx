@@ -19,7 +19,6 @@ export default function AddProduct() {
   const [blogPreview, setBlogPreview] = useState(null);
   const [authorPreview, setAuthorPreview] = useState(null);
 
-  // 🔑 file input এর জন্য ref
   const blogFileRef = useRef(null);
   const authorFileRef = useRef(null);
 
@@ -123,7 +122,7 @@ export default function AddProduct() {
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:ring-2 outline-0 focus:ring-blue-500"
             required
           />
         </div>
@@ -136,7 +135,7 @@ export default function AddProduct() {
             value={formData.content}
             onChange={handleChange}
             rows="5"
-            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:ring-2 outline-0 focus:ring-blue-500"
             required
           />
         </div>
@@ -151,7 +150,7 @@ export default function AddProduct() {
             accept="image/*"
             ref={blogFileRef} // 🔑 ref
             onChange={(e) => handleImageUpload(e, "image")}
-            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white"
+            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent outline-0 text-white"
             required
           />
           {blogPreview && (
@@ -170,7 +169,7 @@ export default function AddProduct() {
             name="category"
             value={formData.category}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 rounded-lg border outline-0 border-gray-600 bg-transparent text-white focus:ring-2 focus:ring-blue-500"
             required>
             <option value="" disabled>
               -- Select a Category --
@@ -206,7 +205,7 @@ export default function AddProduct() {
             accept="image/*"
             ref={authorFileRef} // 🔑 ref
             onChange={(e) => handleImageUpload(e, "authorImg")}
-            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white"
+            className="w-full p-3 rounded-lg border border-gray-600 outline-0 bg-transparent text-white"
             required
           />
           {authorPreview && (
@@ -227,7 +226,7 @@ export default function AddProduct() {
             value={formData.author}
             onChange={handleChange}
             placeholder="John Doe"
-            className="w-full p-3 rounded-lg border border-gray-600 bg-transparent text-white focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 rounded-lg outline-0 border border-gray-600 bg-transparent text-white focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>
