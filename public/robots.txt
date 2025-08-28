@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://simple-blog-application-delta.vercel.app/
+
+# Sitemaps
+Sitemap: https://simple-blog-application-delta.vercel.app/sitemap.xml

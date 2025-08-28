@@ -12,6 +12,13 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
+      <head>
+        {/* Google Site Verification */}
+        <meta
+          name="google-site-verification"
+          content="zhcRs4-9uj6g2TzbIog6yjY1c5EKstHvTL9zg57whLU"
+        />
+      </head>
       <body className="bg-[#18304e]">
         <SessionProvider>
           {!isAdminRoute && <Navber />}
