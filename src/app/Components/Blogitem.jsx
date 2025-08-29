@@ -22,7 +22,7 @@ const Blogitem = () => {
             <div
               key={post._id}
               className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-              <h2 className="text-xl text-center font-semibold">
+              <h2 className="text-xl text-center mb-2  font-bold">
                 {post.title}
               </h2>
 
