@@ -6,9 +6,8 @@ import Footer from "./Components/Footer";
 import { usePathname } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
 import { Hind_Siliguri } from "next/font/google";
-import { HeroUIProvider } from "@heroui/react"; // ✅ HeroUI import
+import { HeroUIProvider } from "@heroui/react";
 
-// Font load
 const hindSiliguri = Hind_Siliguri({
   subsets: ["latin", "bengali"],
   weight: ["400", "500", "600", "700"],
@@ -20,8 +19,13 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en" className={hindSiliguri.className}>
+  
+      <head>
+        <meta name="google-site-verification" content="zhcRs4-9uj6g2TzbIog6yjY1c5EKstHvTL9zg57whLU" />
+      </head>
+     
+      
       <body className={`bg-[#18304e] ${hindSiliguri.className}`}>
-        {/* ✅ Wrap everything with HeroUIProvider */}
         <HeroUIProvider>
           <SessionProvider>
             {!isAdminRoute && <Navber />}
