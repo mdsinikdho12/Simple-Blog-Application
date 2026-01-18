@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "About Md Sinikdho Mahmud | Full Stack Developer & CSE Student",
+  title: "About Md Sinikdho Mahmud | Full Stack Developer & CST Student",
   description:
     "Md Sinikdho Mahmud (Sinikdho) is a passionate Full Stack Web Developer and CSE student. Skilled in MERN Stack, Next.js, React, and real-world project development.",
   keywords: [
@@ -42,7 +42,7 @@ export default function AboutPage() {
         <div className="mb-8">
           <h2 className="text-2xl font-semibold mb-3">📚 Background</h2>
           <p className="text-gray-300 leading-relaxed">
-            আমি Computer Science and Engineering (CSE) নিয়ে পড়াশোনা করছি। আমার
+            আমি Computer Science and Technology (CST) নিয়ে পড়াশোনা করছি। আমার
             Programming Journey শুরু হয় Web Design দিয়ে, এরপর ধাপে ধাপে Web
             Development এবং MERN Stack সফলভাবে শেষ করি।
           </p>
